@@ -1,0 +1,200 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% The Legrand Orange Book
+% LaTeX Template
+% Version 1.3 (21/8/13)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Mathias Legrand (legrand.mathias@gmail.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+% Compiling this template:
+% This template uses biber for its bibliography and makeindex for its index.
+% When you first open the template, compile it from the command line with the 
+% commands below to make sure your LaTeX distribution is configured correctly:
+%
+% 1) pdflatex main
+% 2) makeindex main.idx -s StyleInd.ist
+% 3) biber main
+% 4) pdflatex main x 2
+%
+% After this, when you wish to update the bibliography/index use the appropriate
+% command above and make sure to compile with pdflatex several times 
+% afterwards to propagate your changes to the document.
+%
+% This template also uses a number of packages which may need to be
+% updated to the newest versions for the template to compile. It is strongly
+% recommended you update your LaTeX distribution if you have any
+% compilation errors.
+%
+% Important note:
+% Chapter heading images should have a 2:1 width:height ratio,
+% e.g. 920px width and 460px height.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[11pt,fleqn]{book} % Default font size and left-justified equations
+
+\usepackage[top=3cm,bottom=3cm,left=3.2cm,right=3.2cm,headsep=10pt,a4paper]{geometry} % Page margins
+
+\usepackage{xcolor} % Required for specifying colors by name
+\definecolor{ocre}{RGB}{243,102,25} % Define the orange color used for highlighting throughout the book
+
+% Font Settings
+\usepackage{avant} % Use the Avantgarde font for headings
+%\usepackage{times} % Use the Times font for headings
+\usepackage{mathptmx} % Use the Adobe Times Roman as the default text font together with math symbols from the Sym颅bol, Chancery and Com颅puter Modern fonts
+
+\usepackage{microtype} % Slightly tweak font spacing for aesthetics
+\usepackage[utf8]{inputenc} % Required for including letters with accents
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+\usepackage{CJK}
+
+% Bibliography
+\usepackage[style=alphabetic,sorting=nyt,sortcites=true,autopunct=true,babel=hyphen,hyperref=true,abbreviate=false,backref=true,backend=biber]{biblatex}
+\addbibresource{bibliography.bib} % BibTeX bibliography file
+\defbibheading{bibempty}{}
+
+% Index
+\usepackage{calc} % For simpler calculation - used for spacing the index letter headings correctly
+\usepackage{makeidx} % Required to make an index
+\makeindex % Tells LaTeX to create the files required for indexing
+
+%----------------------------------------------------------------------------------------
+
+\input{structure} % Insert the commands.tex file which contains the majority of the structure behind the template
+
+\begin{document}
+\begin{CJK*}{GBK}{song}
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+\begingroup
+\thispagestyle{empty}
+\AddToShipoutPicture*{\put(6,5){\includegraphics[scale=1]{background}}} % Image background
+\centering
+\vspace*{9cm}
+\par\normalfont\fontsize{35}{35}\sffamily\selectfont
+支持向量机通俗导论\par （理解SVM的三层境界）\par % Book title
+\vspace*{1cm}
+{\Huge July, pluskid 著}\par % Author name
+{\Huge Codejedi 编辑}\par
+\endgroup
+
+%----------------------------------------------------------------------------------------
+%	TABLE OF CONTENTS
+%----------------------------------------------------------------------------------------
+
+\chapterimage{chapter_head_1.pdf} % Table of contents heading image
+
+\pagestyle{empty} % No headers
+
+\tableofcontents % Print the table of contents itself
+
+\cleardoublepage % Forces the first chapter to start on an odd page so it's on the right
+
+\pagestyle{fancy} % Print headers again
+
+%----------------------------------------------------------------------------------------
+%	CHAPTER 1
+%----------------------------------------------------------------------------------------
+
+\chapterimage{chapter_head_2.pdf} % Chapter heading image
+
+\chapter{第一层——了解SVM}
+
+\section{什么是支持向量机SVM}\index{Paragraphs of Text}
+要明白什么是SVM，便得从分类说起。\par
+分类作为数据挖掘领域中一项非常重要的任务，它的目的是学会一个分类函数或分类模型(或者叫做分类器)，而支持向量机本身便是一种监督式学习的方法(至于具体什么是监督学习与非监督学习，请参见此系列\emph{Machine L\&Data Mining}第一篇)，它广泛的应用于统计分类以及回归分析中。\par
+支持向量机（SVM）是90年代中期发展起来的基于统计学习理论的一种机器学习方法，通过寻求结构化风险最小来提高学习机泛化能力，实现经验风险和置信范围的最小化，从而达到在统计样本量较少的情况下，亦能获得良好统计规律的目的。\par
+    通俗来讲，它是一种二类分类模型，其基本模型定义为特征空间上的间隔最大的线性分类器，即支持向量机的学习策略便是间隔最大化，最终可转化为一个凸二次规划问题的求解。\par
+    对于不想深究SVM原理的同学或比如就只想看看SVM是干嘛的，那么，了解到这里便足够了，不需上层。而对于那些喜欢深入研究一个东西的同学，甚至究其本质的，咱们则还有很长的一段路要走，万里长征，咱们开始迈第一步吧，相信你能走完。\par
+
+%------------------------------------------------
+
+\section{线性分类}\index{线性分类}
+
+OK，在讲SVM之前，咱们必须先弄清楚一个概念：线性分类器(也可以叫做感知机，这里的机表示的是一种算法，本文第三部分、证明SVM中会详细阐述)。
+
+\subsection{分类标准}\index{分类标准}
+这里我们考虑的是一个两类的分类问题，数据点用x来表示，这是一个n维向量，w\^T中的T代表转置，而类别用y来表示，可以取1或者-1，分别代表两个不同的类。一个线性分类器的学习目标就是要在n维的数据空间中找到一个分类超平面，其方程可以表示为：$$w^{T}x+b=0$$
+上面给出了线性分类的定义描述，但或许读者没有想过：为何用y取1 或者 -1来表示两个不同的类别呢？其实，这个1或-1的分类标准起源于logistic回归，为了完整和过渡的自然性，咱们就再来看看这个logistic回归。
+%------------------------------------------------
+
+\subsection{1或-1分类标准的起源：logistic回归}\index{1或-1分类标准的起源：logistic回归}
+Logistic回归目的是从特征学习出一个0/1分类模型，而这个模型是将特性的线性组合作为自变量，由于自变量的取值范围是负无穷到正无穷。因此，使用logistic函数（或称作sigmoid函数）将自变量映射到(0,1)上，映射后的值被认为是属于y=1的概率。形式化表示就是\par 
+假设函数\par
+$$h_{\theta}(x)=g(\theta^{T}x)=\frac{ 1}{1+e^{-\theta^{T}x}},$$
+其中x是n维特征向量，函数g就是logistic函数。\par
+而$g(z)=\frac{ 1}{ 1+e^{-z}}$的图像是\par
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=1]{Pictures/logistic.png} 
+\end{figure}
+可以看到，将无穷映射到了(0,1)。\par
+而假设函数就是特征属于y=1的概率。\par
+$$P(y=1|x;\theta)=h_{\theta}(x)$$
+$$P(y=0|x;\theta)=1-h_{\theta}(x)$$\par
+当我们要判别一个新来的特征属于哪个类时，只需求，若大于0.5就是y=1的类，反之属于y=0类。\par
+再审视一下$h_{\theta}(x)$，发现$h_{\theta}(x)$只和$\theta_{T}x$有关，$\theta_{T}x>0$，那么$h_{\theta}(x)>0.5$，$g(z)$只不过是用来映射，真实的类别决定权还在$\theta_{T}x$。还有当时$\theta^{T}x>>0$，$h_{\theta}(x)=1$，反之$h_{\theta}(x)=0$。如果我们只从$\theta^{T}x$出发，希望模型达到的目标无非就是让训练数据中$y=1$的特征$\theta^{T}x>>0$，而是$y=0$的特征$\theta^{T}x<<0$。Logistic回归就是要学习得到$\theta$，使得正例的特征远大于0，负例的特征远小于0，强调在全部训练实例上达到这个目标。\par
+
+
+%----------------------------------------------------------------------------------------
+%	CHAPTER 2
+%----------------------------------------------------------------------------------------
+
+\chapter{第二层——深入SVM}
+
+\section{从线性可分到线性不可分}\index{从线性可分到线性不可分}
+\subsection{从原始问题到对偶问题的求解}\index{从原始问题到对偶问题的求解}
+
+
+%------------------------------------------------
+
+
+
+%----------------------------------------------------------------------------------------
+%	CHAPTER 3
+%----------------------------------------------------------------------------------------
+
+\chapterimage{chapter_head_1.pdf} % Chapter heading image
+
+\chapter{第三层——证明SVM}
+
+
+
+%----------------------------------------------------------------------------------------
+%	BIBLIOGRAPHY
+%----------------------------------------------------------------------------------------
+
+\chapter*{Bibliography}
+\addcontentsline{toc}{chapter}{\textcolor{ocre}{Bibliography}}
+\section*{Books}
+\addcontentsline{toc}{section}{Books}
+\printbibliography[heading=bibempty,type=book]
+\section*{Articles}
+\addcontentsline{toc}{section}{Articles}
+\printbibliography[heading=bibempty,type=article]
+
+%----------------------------------------------------------------------------------------
+%	INDEX
+%----------------------------------------------------------------------------------------
+
+\cleardoublepage
+\setlength{\columnsep}{0.75cm}
+\addcontentsline{toc}{chapter}{\textcolor{ocre}{Index}}
+\printindex
+
+%----------------------------------------------------------------------------------------
+\end{CJK*}
+\end{document}
